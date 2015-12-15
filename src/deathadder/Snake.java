@@ -34,9 +34,7 @@ public class Snake {
     }
 
     public void draw(Graphics graphics) {
-        
-        
-                
+
         graphics.setColor(bodyColor);
 
         for (int i = 0; i < body.size(); i++) {

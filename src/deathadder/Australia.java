@@ -5,9 +5,11 @@
  */
 package deathadder;
 
+import audio.AudioPlayer;
 import environment.Direction;
 import environment.Environment;
 import grid.Grid;
+import images.ResourceTools;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -24,22 +26,28 @@ class Australia extends Environment implements CellDataProviderIntf {
     private Grid grid;
     private Snake slitherin;
     private ArrayList<Barrier> barriers;
-    private ArrayList<PickUp> pickUps;
+    private ArrayList<PickUp> speeds;
+    private ArrayList<PickUp> healthPotions;
 
     public Australia() {
         this.setBackground(Color.GREEN);
 
-        grid = new Grid(135, 75, 10, 10, new Point(25, 25), new Color(46, 139, 87, 128));
+        grid = new Grid(127, 60, 15, 15, new Point(25, 25), new Color(46, 139, 87, 128));
         slitherin = new Snake(Direction.LEFT, grid);
-        
+
         barriers = new ArrayList<>();
-        for (int i = 0; i < 90; i++) {
+        for (int i = 0; i < 70; i++) {
             barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this));
         }
 
-        pickUps = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            pickUps.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.RED, this));
+        speeds = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            speeds.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.YELLOW, this, "SPEED", ResourceTools.loadImageFromResource("deathadder/speed.png")));
+        }
+
+        healthPotions = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            healthPotions.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.RED, this, "HEALTH", ResourceTools.loadImageFromResource("deathadder/index.png")));
         }
 
     }
@@ -52,32 +60,70 @@ class Australia extends Environment implements CellDataProviderIntf {
     public void initializeEnvironment() {
     }
 
-    int counter;
     int moveDelay = 0;
     int moveDelayLimit = 4;
 
+    int healthDelay = 0;
+    int healthDelayLimit = 200;
+
     @Override
     public void timerTaskHandler() {
+        if (healthPotions != null) {
+            //if counted to limit, then move snake and reset counter
+            if (healthDelay >= healthDelayLimit) {
+                healthDelay = 0;
+                radomizeHealthLocations();
+            } else {
+                //else keep counting
+                healthDelay++;
+            }
+        }
+
         if (slitherin != null) {
             //if counted to limit, then move snake and reset counter
             if (moveDelay >= moveDelayLimit) {
                 moveDelay = 0;
                 slitherin.move();
+                checkIntersections();
             } else {
                 //else keep counting
                 moveDelay++;
             }
-            checkIntersections();
+        }
 
+    }
+
+    private void radomizeHealthLocations() {
+        for (PickUp health : healthPotions) {
+            health.setX(grid.getRandomGridLocation().x);
+            health.setY(grid.getRandomGridLocation().y);
         }
     }
 
     public void checkIntersections() {
-//check if the snake's head is inside a wall
-        for (Barrier barrier : barriers) {
-            if (barrier.getLocation().equals(slitherin.getHead())) {
-                System.out.println("HIT ");
-                slitherin.addHealth(-10000);
+        if (barriers != null) {
+            for (Barrier barrier : barriers) {
+                if (barrier.getLocation().equals(slitherin.getHead())) {
+                    //System.out.println("HIT");
+                    slitherin.addHealth(-10000);
+                }
+            }
+        }
+
+        if (healthPotions != null) {
+            for (PickUp healthPickUp : healthPotions) {
+                if (healthPickUp.getLocation().equals(slitherin.getHead())) {
+                    AudioPlayer.play("/deathadder/coin.wav");
+                    slitherin.addHealth(+20);
+                }
+            }
+        }
+
+        if (speeds != null) {
+            for (PickUp pickUp : speeds) {
+                if (pickUp.getLocation().equals(slitherin.getHead())) {
+                    AudioPlayer.play("/deathadder/speed.wav");
+                }
             }
         }
     }
@@ -109,19 +155,26 @@ class Australia extends Environment implements CellDataProviderIntf {
         if (grid != null) {
             grid.paintComponent(graphics);
         }
+
         if (slitherin != null) {
             slitherin.draw(graphics);
         }
+        
         if (barriers != null) {
             for (int i = 0; i < barriers.size(); i++) {
                 barriers.get(i).draw(graphics);
-
             }
         }
-        if (pickUps!= null) {
-            for (int i = 0; i < pickUps.size(); i++) {
-                pickUps.get(i).draw(graphics);
-
+        
+        if (speeds != null) {
+            for (int i = 0; i < speeds.size(); i++) {
+                speeds.get(i).draw(graphics);
+            }
+        }
+        
+        if (healthPotions != null) {
+            for (int i = 0; i < healthPotions.size(); i++) {
+                healthPotions.get(i).draw(graphics);
             }
         }
     }

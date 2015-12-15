@@ -3,8 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/DeathAdder.java</file>
             <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/CellDataProviderIntf.java</file>
+            <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/Direction.java</file>
+            <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/GridObject.java</file>
+            <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/PickUp.java</file>
+            <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/Snake.java</file>
             <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/Australia.java</file>
             <file>file:/C:/Users/evanhoy/Documents/NetBeansProjects/DeathAdder/src/deathadder/Barrier.java</file>
         </group>

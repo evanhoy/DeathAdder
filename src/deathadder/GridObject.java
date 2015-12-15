@@ -14,6 +14,7 @@ import java.awt.Point;
  * @author evanhoy
  */
 public class GridObject {
+
     public void draw(Graphics graphics) {
         graphics.setColor(getColor());
         graphics.fill3DRect(getCellData().getSystemCoordX(getX(), getY()),
@@ -23,15 +24,17 @@ public class GridObject {
                 true);
     }
 
-    public GridObject(int x, int y, Color color, CellDataProviderIntf cellData) {
+    public GridObject(int x, int y, Color color, CellDataProviderIntf cellData, String type) {
         this.x = x;
         this.y = y;
         this.color = color;
         this.cellData = cellData;
+        this.type = type;
     }
 
     private int x, y;
     private Color color;
+    private String type;
     private boolean breakable;
     private CellDataProviderIntf cellData;
 
@@ -111,5 +114,5 @@ public class GridObject {
     public void setCellData(CellDataProviderIntf cellData) {
         this.cellData = cellData;
     }
-    
+
 }

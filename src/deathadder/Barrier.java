@@ -26,8 +26,6 @@ public class Barrier extends GridObject {
     }
 
     public Barrier(int x, int y, Color color, CellDataProviderIntf cellData) {
-        super(x, y, color, cellData);
+        super(x, y, color, cellData, "BARRIER");
     }
 }
-
-

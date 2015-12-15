@@ -5,8 +5,11 @@
  */
 package deathadder;
 
+import images.ResourceTools;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
 
 /**
  *
@@ -14,18 +17,23 @@ import java.awt.Graphics;
  */
 public class PickUp extends GridObject {
 
-    public PickUp(int x, int y, Color color, CellDataProviderIntf cellData) {
-        super(x, y, color, cellData);
+    public PickUp(int x, int y, Color color, CellDataProviderIntf cellData, String type, Image image) {
+        super(x, y, color, cellData, type);
+        this.image = image;
+
     }
+
     @Override
     public void draw(Graphics graphics) {
-   //     graphics.setColor(getColor());
-        graphics.setColor(Color.PINK);
-        graphics.fill3DRect(getCellData().getSystemCoordX(getX(), getY()),
+        graphics.setColor(getColor());
+
+        graphics.drawImage(image, getCellData().getSystemCoordX(getX(), getY()),
                 getCellData().getSystemCoordY(getX(), getY()),
                 getCellData().getCellWidth(),
-                getCellData().getCellHeight(),
-                true);
+                getCellData().getCellHeight(), null);
+
     }
-    
+
+    private Image image;
+
 }
