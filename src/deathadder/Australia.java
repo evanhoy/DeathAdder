@@ -30,13 +30,13 @@ class Australia extends Environment implements CellDataProviderIntf {
     private ArrayList<PickUp> healthPotions;
 
     public Australia() {
-        this.setBackground(Color.GREEN);
+        this.setBackground(ResourceTools.loadImageFromResource("deathadder/forest.JPG"));
 
-        grid = new Grid(127, 60, 15, 15, new Point(25, 25), new Color(46, 139, 87, 128));
+        grid = new Grid(66, 33, 20, 20, new Point(25, 25), Color.YELLOW);
         slitherin = new Snake(Direction.LEFT, grid);
 
         barriers = new ArrayList<>();
-        for (int i = 0; i < 70; i++) {
+        for (int i = 0; i < 40; i++) {
             barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this));
         }
 
@@ -60,11 +60,16 @@ class Australia extends Environment implements CellDataProviderIntf {
     public void initializeEnvironment() {
     }
 
+    int SLOW = 6;
+    int MEDIUM = 4;
+    int FAST = 2;
+    int BEAST = 1;
+
     int moveDelay = 0;
-    int moveDelayLimit = 4;
+    int moveDelayLimit = MEDIUM;
 
     int healthDelay = 0;
-    int healthDelayLimit = 200;
+    int healthDelayLimit = 100;
 
     @Override
     public void timerTaskHandler() {
@@ -73,6 +78,7 @@ class Australia extends Environment implements CellDataProviderIntf {
             if (healthDelay >= healthDelayLimit) {
                 healthDelay = 0;
                 radomizeHealthLocations();
+                moveDelayLimit = MEDIUM;
             } else {
                 //else keep counting
                 healthDelay++;
@@ -123,6 +129,7 @@ class Australia extends Environment implements CellDataProviderIntf {
             for (PickUp pickUp : speeds) {
                 if (pickUp.getLocation().equals(slitherin.getHead())) {
                     AudioPlayer.play("/deathadder/speed.wav");
+                    moveDelayLimit = FAST;
                 }
             }
         }
@@ -159,19 +166,19 @@ class Australia extends Environment implements CellDataProviderIntf {
         if (slitherin != null) {
             slitherin.draw(graphics);
         }
-        
+
         if (barriers != null) {
             for (int i = 0; i < barriers.size(); i++) {
                 barriers.get(i).draw(graphics);
             }
         }
-        
+
         if (speeds != null) {
             for (int i = 0; i < speeds.size(); i++) {
                 speeds.get(i).draw(graphics);
             }
         }
-        
+
         if (healthPotions != null) {
             for (int i = 0; i < healthPotions.size(); i++) {
                 healthPotions.get(i).draw(graphics);

@@ -28,9 +28,9 @@ public class Snake {
 
         //create the snake body
         body = new ArrayList<>();
-        body.add(new Point(5, 5));
-        body.add(new Point(5, 4));
-        body.add(new Point(5, 3));
+        body.add(new Point(50, 20));
+        body.add(new Point(50, 21));
+        body.add(new Point(50, 22));
     }
 
     public void draw(Graphics graphics) {
