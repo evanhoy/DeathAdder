@@ -17,6 +17,20 @@ import java.util.ArrayList;
  * @author evanhoy
  */
 public class Snake {
+
+    /**
+     * @return the HEAD_POSITION
+     */
+    public static int getHEAD_POSITION() {
+        return HEAD_POSITION;
+    }
+
+    /**
+     * @param aHEAD_POSITION the HEAD_POSITION to set
+     */
+    public static void setHEAD_POSITION(int aHEAD_POSITION) {
+        HEAD_POSITION = aHEAD_POSITION;
+    }
 //doesn't respect grid boundaries
 //doesn't delete tail when moving
     //doesn't move too fast
@@ -28,20 +42,20 @@ public class Snake {
 
         //create the snake body
         body = new ArrayList<>();
-        body.add(new Point(50, 20));
-        body.add(new Point(50, 21));
-        body.add(new Point(50, 22));
+        body.add(new Point(20, 10));
+        body.add(new Point(20, 11));
+        body.add(new Point(20, 12));
     }
 
     public void draw(Graphics graphics) {
 
-        graphics.setColor(bodyColor);
+        graphics.setColor(getBodyColor());
 
-        for (int i = 0; i < body.size(); i++) {
-            graphics.fillOval(grid.getCellSystemCoordinate(body.get(i)).x,
-                    grid.getCellSystemCoordinate(body.get(i)).y,
-                    grid.getCellWidth(),
-                    grid.getCellHeight());
+        for (int i = 0; i < getBody().size(); i++) {
+            graphics.fillOval(getGrid().getCellSystemCoordinate(getBody().get(i)).x,
+                    getGrid().getCellSystemCoordinate(getBody().get(i)).y,
+                    getGrid().getCellWidth(),
+                    getGrid().getCellHeight());
         }
     }
 
@@ -59,28 +73,36 @@ public class Snake {
             } else if (getDirection() == Direction.UP) {
                 newHead.y--;
             }
+
 //add new Head
-            body.add(HEAD_POSITION, newHead);
+            getBody().add(getHEAD_POSITION(), newHead);
 
             //delete the tail
-            body.remove(body.size() - 1);
+            if (growthCounter > 0) {
+                growthCounter--;
+            } else {
+                getBody().remove(getBody().size() - 1);
+            }
 
         }
     }
-    private static final int HEAD_POSITION = 0;
-
-    public Point getHead() {
-        return body.get(HEAD_POSITION);
-
-    }
 
     //<editor-fold defaultstate="collapsed" desc="Properties">
+    private static int HEAD_POSITION = 0;
+
     private Direction direction = Direction.LEFT;
     private ArrayList<Point> body;
     private Grid grid;
     private Color bodyColor = Color.RED;
 
     private int health = 100;
+
+    private int growthCounter;
+
+    public Point getHead() {
+        return getBody().get(getHEAD_POSITION());
+
+    }
 
     /**
      * @return the direction
@@ -115,12 +137,67 @@ public class Snake {
      * @param health the health to set
      */
     public void addHealth(int health) {
-        this.health += health;
+        this.setHealth(this.getHealth() + health);
     }
 
     public boolean isAlive() {
-        return (health > 0);
+        return (getHealth() > 0);
 
     }
 
+    /**
+     * @return the body
+     */
+    public ArrayList<Point> getBody() {
+        return body;
+    }
+
+    /**
+     * @param body the body to set
+     */
+    public void setBody(ArrayList<Point> body) {
+        this.body = body;
+    }
+
+    /**
+     * @return the grid
+     */
+    public Grid getGrid() {
+        return grid;
+    }
+
+    /**
+     * @param grid the grid to set
+     */
+    public void setGrid(Grid grid) {
+        this.grid = grid;
+    }
+
+    /**
+     * @return the bodyColor
+     */
+    public Color getBodyColor() {
+        return bodyColor;
+    }
+
+    /**
+     * @param health the health to set
+     */
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    /**
+     * @return the growthCounter
+     */
+    public int getGrowthCounter() {
+        return growthCounter;
+    }
+
+    /**
+     * @param growth the growth to add to the snake
+     */
+    public void addGrowthCounter(int growth) {
+        this.growthCounter += growth;
+    }
 }

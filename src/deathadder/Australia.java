@@ -32,22 +32,26 @@ class Australia extends Environment implements CellDataProviderIntf {
     public Australia() {
         this.setBackground(ResourceTools.loadImageFromResource("deathadder/forest.JPG"));
 
-        grid = new Grid(66, 33, 20, 20, new Point(25, 25), Color.YELLOW);
+        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.YELLOW);
         slitherin = new Snake(Direction.LEFT, grid);
-
         barriers = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
-            barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this));
+            barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this, "BARRIER"));
+            {
+                if (barriers.get(i).getLocation().equals(slitherin.getHead())) {
+                    barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this, "BARRIER"));
+                }
+            }
         }
 
         speeds = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            speeds.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.YELLOW, this, "SPEED", ResourceTools.loadImageFromResource("deathadder/speed.png")));
+            speeds.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), this, "SPEED", ResourceTools.loadImageFromResource("deathadder/speed.png")));
         }
 
         healthPotions = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            healthPotions.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.RED, this, "HEALTH", ResourceTools.loadImageFromResource("deathadder/index.png")));
+            healthPotions.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), this, "HEALTH", ResourceTools.loadImageFromResource("deathadder/index.png")));
         }
 
     }
@@ -110,16 +114,16 @@ class Australia extends Environment implements CellDataProviderIntf {
         if (barriers != null) {
             for (Barrier barrier : barriers) {
                 if (barrier.getLocation().equals(slitherin.getHead())) {
-                    //System.out.println("HIT");
                     slitherin.addHealth(-10000);
                 }
             }
+
         }
 
         if (healthPotions != null) {
             for (PickUp healthPickUp : healthPotions) {
                 if (healthPickUp.getLocation().equals(slitherin.getHead())) {
-                    AudioPlayer.play("/deathadder/coin.wav");
+                    AudioPlayer.play("/deathadder/health.wav");
                     slitherin.addHealth(+20);
                 }
             }
@@ -133,10 +137,12 @@ class Australia extends Environment implements CellDataProviderIntf {
                 }
             }
         }
+
     }
 
     @Override
-    public void keyPressedHandler(KeyEvent e) {
+    public void keyPressedHandler(KeyEvent e
+    ) {
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             slitherin.setDirection(Direction.UP);
@@ -146,15 +152,19 @@ class Australia extends Environment implements CellDataProviderIntf {
             slitherin.setDirection(Direction.LEFT);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             slitherin.setDirection(Direction.RIGHT);
+        } else if (e.getKeyCode() == KeyEvent.VK_G) {
+            slitherin.addGrowthCounter(2);
         }
     }
 
     @Override
-    public void keyReleasedHandler(KeyEvent e) {
+    public void keyReleasedHandler(KeyEvent e
+    ) {
     }
 
     @Override
-    public void environmentMouseClicked(MouseEvent e) {
+    public void environmentMouseClicked(MouseEvent e
+    ) {
     }
 
     @Override
@@ -187,12 +197,14 @@ class Australia extends Environment implements CellDataProviderIntf {
     }
 
     @Override
-    public int getSystemCoordX(int x, int y) {
+    public int getSystemCoordX(int x, int y
+    ) {
         return grid.getCellSystemCoordinate(x, y).x;
     }
 
     @Override
-    public int getSystemCoordY(int x, int y) {
+    public int getSystemCoordY(int x, int y
+    ) {
         return grid.getCellSystemCoordinate(x, y).y;
     }
 

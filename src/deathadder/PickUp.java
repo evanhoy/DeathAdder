@@ -17,23 +17,30 @@ import java.awt.Point;
  */
 public class PickUp extends GridObject {
 
-    public PickUp(int x, int y, Color color, CellDataProviderIntf cellData, String type, Image image) {
-        super(x, y, color, cellData, type);
+    public PickUp(int x, int y, CellDataProviderIntf cellData, String type, Image image) {
+        super(x, y, cellData, type);
         this.image = image;
-
     }
 
     @Override
     public void draw(Graphics graphics) {
-        graphics.setColor(getColor());
 
-        graphics.drawImage(image, getCellData().getSystemCoordX(getX(), getY()),
-                getCellData().getSystemCoordY(getX(), getY()),
-                getCellData().getCellWidth(),
-                getCellData().getCellHeight(), null);
+        int cellX, cellY, cellWidth, cellHeight;
+        cellX = getCellData().getSystemCoordX(getX(), getY());
+        cellY = getCellData().getSystemCoordY(getX(), getY());
+        cellWidth = getCellData().getCellWidth();
+        cellHeight = getCellData().getCellHeight();
+        
+        graphics.drawImage(image, cellX, cellY, cellWidth, cellHeight, null);
+
+//        graphics.drawImage(image, getCellData().getSystemCoordX(getX(), getY()),
+//                getCellData().getSystemCoordY(getX(), getY()),
+//                getCellData().getCellWidth(),
+//                getCellData().getCellHeight(), null);
 
     }
 
     private Image image;
+
 
 }

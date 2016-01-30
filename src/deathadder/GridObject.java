@@ -24,10 +24,9 @@ public class GridObject {
                 true);
     }
 
-    public GridObject(int x, int y, Color color, CellDataProviderIntf cellData, String type) {
+    public GridObject(int x, int y, CellDataProviderIntf cellData, String type) {
         this.x = x;
         this.y = y;
-        this.color = color;
         this.cellData = cellData;
         this.type = type;
     }
