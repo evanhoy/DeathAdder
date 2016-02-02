@@ -24,11 +24,12 @@ public class GridObject {
                 true);
     }
 
-    public GridObject(int x, int y, CellDataProviderIntf cellData, String type) {
+    public GridObject(int x, int y, CellDataProviderIntf cellData, String type, Color color) {
         this.x = x;
         this.y = y;
         this.cellData = cellData;
         this.type = type;
+        this.color = color;
     }
 
     private int x, y;
@@ -112,6 +113,20 @@ public class GridObject {
      */
     public void setCellData(CellDataProviderIntf cellData) {
         this.cellData = cellData;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

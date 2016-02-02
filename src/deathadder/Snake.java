@@ -36,15 +36,18 @@ public class Snake {
     //doesn't move too fast
     //doesn't respect self collision
 
-    public Snake(Direction direction, Grid grid) {
+    public Snake(Direction direction, Color color, Grid grid, MoveValidatorIntf moveValidator) {
         this.direction = direction;
         this.grid = grid;
+        this.color = color;
 
         //create the snake body
         body = new ArrayList<>();
         body.add(new Point(20, 10));
         body.add(new Point(20, 11));
         body.add(new Point(20, 12));
+        
+        this.moveValidator = moveValidator;
     }
 
     public void draw(Graphics graphics) {
@@ -75,7 +78,7 @@ public class Snake {
             }
 
 //add new Head
-            getBody().add(getHEAD_POSITION(), newHead);
+            getBody().add(getHEAD_POSITION(), moveValidator.validate(newHead));
 
             //delete the tail
             if (growthCounter > 0) {
@@ -90,14 +93,15 @@ public class Snake {
     //<editor-fold defaultstate="collapsed" desc="Properties">
     private static int HEAD_POSITION = 0;
 
-    private Direction direction = Direction.LEFT;
+    private Direction direction = Direction.RIGHT;
     private ArrayList<Point> body;
     private Grid grid;
-    private Color bodyColor = Color.RED;
+    private Color bodyColor = Color.BLUE;
 
     private int health = 100;
-
     private int growthCounter;
+    private final Color color;
+    private final MoveValidatorIntf moveValidator;
 
     public Point getHead() {
         return getBody().get(getHEAD_POSITION());
@@ -124,7 +128,6 @@ public class Snake {
     public void setBodyColor(Color bodyColor) {
         this.bodyColor = bodyColor;
     }
-    //</editor-fold>
 
     /**
      * @return the health
@@ -200,4 +203,5 @@ public class Snake {
     public void addGrowthCounter(int growth) {
         this.growthCounter += growth;
     }
+    //</editor-fold>
 }

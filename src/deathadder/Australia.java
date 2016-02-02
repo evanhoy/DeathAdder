@@ -21,19 +21,23 @@ import java.util.ArrayList;
  *
  * @author evanhoy
  */
-class Australia extends Environment implements CellDataProviderIntf {
+class Australia extends Environment implements CellDataProviderIntf, MoveValidatorIntf {
 
     private Grid grid;
     private Snake slitherin;
     private ArrayList<Barrier> barriers;
     private ArrayList<PickUp> speeds;
     private ArrayList<PickUp> healthPotions;
+    private GameState state;
 
     public Australia() {
-        this.setBackground(ResourceTools.loadImageFromResource("deathadder/forest.JPG"));
+//        state = GameState.MENU;
+        state = GameState.PAUSE;
 
-        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.YELLOW);
-        slitherin = new Snake(Direction.LEFT, grid);
+        this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
+
+        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.RED);
+        slitherin = new Snake(Direction.LEFT, Color.BLUE, grid, this);
         barriers = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
             barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this, "BARRIER"));
@@ -47,13 +51,23 @@ class Australia extends Environment implements CellDataProviderIntf {
         speeds = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             speeds.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), this, "SPEED", ResourceTools.loadImageFromResource("deathadder/speed.png")));
+            {
+                if (speeds.get(i).getLocation().equals(barriers.get(i).getLocation())) {
+                    speeds.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), this, "SPEED", ResourceTools.loadImageFromResource("deathadder/speed.png")));
+                }
+            }
         }
 
         healthPotions = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             healthPotions.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), this, "HEALTH", ResourceTools.loadImageFromResource("deathadder/index.png")));
-        }
+            {
 
+                if (healthPotions.get(i).getLocation().equals(barriers.get(i).getLocation())) {
+                    healthPotions.add(new PickUp(getRandom(grid.getColumns()), getRandom(grid.getRows()), this, "SPEED", ResourceTools.loadImageFromResource("deathadder/speed.png")));
+                }
+            }
+        }
     }
 
     private int getRandom(int max) {
@@ -77,27 +91,30 @@ class Australia extends Environment implements CellDataProviderIntf {
 
     @Override
     public void timerTaskHandler() {
-        if (healthPotions != null) {
-            //if counted to limit, then move snake and reset counter
-            if (healthDelay >= healthDelayLimit) {
-                healthDelay = 0;
-                radomizeHealthLocations();
-                moveDelayLimit = MEDIUM;
-            } else {
-                //else keep counting
-                healthDelay++;
-            }
-        }
+        if (state == GameState.GAME) {
 
-        if (slitherin != null) {
-            //if counted to limit, then move snake and reset counter
-            if (moveDelay >= moveDelayLimit) {
-                moveDelay = 0;
-                slitherin.move();
-                checkIntersections();
-            } else {
-                //else keep counting
-                moveDelay++;
+            if (healthPotions != null) {
+                //if counted to limit, then move snake and reset counter
+                if (healthDelay >= healthDelayLimit) {
+                    healthDelay = 0;
+                    radomizeHealthLocations();
+                    moveDelayLimit = MEDIUM;
+                } else {
+                    //else keep counting
+                    healthDelay++;
+                }
+            }
+
+            if (slitherin != null) {
+                //if counted to limit, then move snake and reset counter
+                if (moveDelay >= moveDelayLimit) {
+                    moveDelay = 0;
+                    slitherin.move();
+                    checkIntersections();
+                } else {
+                    //else keep counting
+                    moveDelay++;
+                }
             }
         }
 
@@ -117,7 +134,6 @@ class Australia extends Environment implements CellDataProviderIntf {
                     slitherin.addHealth(-10000);
                 }
             }
-
         }
 
         if (healthPotions != null) {
@@ -154,6 +170,12 @@ class Australia extends Environment implements CellDataProviderIntf {
             slitherin.setDirection(Direction.RIGHT);
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             slitherin.addGrowthCounter(2);
+        } else if (e.getKeyCode() == KeyEvent.VK_P) {
+            if (state == GameState.GAME) {
+                state = GameState.PAUSE;
+            } else if (state == GameState.PAUSE) {
+                state = GameState.GAME;
+            }
         }
     }
 
@@ -169,6 +191,10 @@ class Australia extends Environment implements CellDataProviderIntf {
 
     @Override
     public void paintEnvironment(Graphics graphics) {
+        if (state == GameState.MENU) {
+            graphics.draw3DRect(150, 100, 300, 90, true);
+
+        }
         if (grid != null) {
             grid.paintComponent(graphics);
         }
@@ -218,4 +244,23 @@ class Australia extends Environment implements CellDataProviderIntf {
         return grid.getCellHeight();
     }
 
+//<editor-fold defaultstate="collapsed" desc="MoveValidatorIntf">
+    @Override
+    public Point validate(Point proposedLocation) {
+        //assess and adjust proposedLocation
+        // if snake.x less than zero, then kill him, stop teh damn game, and mock the player for being weak
+        if (proposedLocation.x < 0) {
+            System.out.println("OFF LEFT");
+        } else if (proposedLocation.x >= grid.getColumns()) {
+            System.out.println("OFF RIGHT");
+        }
+        if (proposedLocation.y < 0) {
+            System.out.println("OFF UP");
+        } else if (proposedLocation.y >= grid.getRows()) {
+            System.out.println("OFF DOWN");
+        }
+
+        return proposedLocation;
+    }
+//</editor-fold>
 }
