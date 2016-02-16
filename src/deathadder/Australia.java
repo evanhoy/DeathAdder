@@ -35,15 +35,10 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
 
     public Australia() {
         this.setBackground(Color.GREEN);
-//        state = GameState.GAME;
-//        this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
 
         setState(GameState.MENU);
-//        state = GameState.PAUSE;
-//        state = GameState.MENU;
-//        AudioPlayer.play("/deathadder/Dankstorm.mp3");
-        
-        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.RED);
+
+        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.GREEN);
         slitherin = new Snake(Direction.RIGHT, Color.BLUE, grid, this);
         barriers = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
@@ -240,7 +235,16 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             if (slitherin != null) {
                 slitherin.draw(graphics);
             }
-
+            if (getState() == GameState.GAME) {
+                Font fnt0 = new Font("help", Font.BOLD, 25);
+                graphics.setFont(fnt0);
+                graphics.setColor(Color.YELLOW);
+                graphics.drawString("P = PAUSE", 1215, 650);
+                Font fnt1 = new Font("help", Font.BOLD, 25);
+                graphics.setFont(fnt1);
+                graphics.setColor(Color.YELLOW);
+                graphics.drawString("ARROWS = DIRECTION", 1070, 680);
+            }
             if (getState() == GameState.PAUSE) {
                 Font fnt0 = new Font("arial", Font.ITALIC, 70);
                 graphics.setFont(fnt0);
@@ -287,15 +291,15 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     ) {
         //assess and adjust proposedLocation
         // if snake.x less than zero, then kill him, stop teh damn game, and mock the player for being weak
-        if (proposedLocation.x < 0) {
-            System.out.println("OFF LEFT");
+        if (proposedLocation.x == 0) {
+            slitherin.setDirection(Direction.RIGHT);
         } else if (proposedLocation.x >= grid.getColumns()) {
-            System.out.println("OFF RIGHT");
+            slitherin.setDirection(Direction.LEFT);
         }
-        if (proposedLocation.y < 0) {
-            System.out.println("OFF UP");
+        if (proposedLocation.y == 0) {
+            slitherin.setDirection(Direction.DOWN);
         } else if (proposedLocation.y >= grid.getRows()) {
-            System.out.println("OFF DOWN");
+            slitherin.setDirection(Direction.UP);
         }
 
         return proposedLocation;
@@ -314,17 +318,16 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
      */
     public void setState(GameState state) {
         this.state = state;
-        
+
         if (state == GameState.MENU) {
             this.setBackground(Color.GREEN);
-            AudioPlayer.play("/deathadder/Dankstorm.mp3");
+            AudioPlayer.play("/deathadder/Dankstorm.wav");
         } else if (state == GameState.GAME) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
 //            AudioPlayer.play("");
-        } else if (state == GameState.PAUSE){
+        } else if (state == GameState.PAUSE) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
-            //do nothing
         }
-        
+
     }
 }
