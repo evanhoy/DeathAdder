@@ -11,8 +11,10 @@ import environment.Environment;
 import grid.Grid;
 import images.ResourceTools;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -29,15 +31,26 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     private ArrayList<PickUp> speeds;
     private ArrayList<PickUp> healthPotions;
     private GameState state;
+    private MySoundManager soundManager;
 
     public Australia() {
-//        state = GameState.MENU;
-        state = GameState.PAUSE;
-
+        state = GameState.GAME;
         this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
 
+        state = GameState.PAUSE;
+        state = GameState.MENU;
+        this.setBackground(Color.GREEN);
+        AudioPlayer.play("/deathadder/Dankstorm.mp3");
+
+//        if (state == GameState.MENU) {
+//            this.setBackground(Color.GREEN);
+//            AudioPlayer.play("/deathadder/Dankstorm.mp3");
+//        } else if (state == GameState.GAME) {
+//            this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
+//        } else if (state == GameState.PAUSE) 
+        
         grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.RED);
-        slitherin = new Snake(Direction.LEFT, Color.BLUE, grid, this);
+        slitherin = new Snake(Direction.RIGHT, Color.BLUE, grid, this);
         barriers = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
             barriers.add(new Barrier(getRandom(grid.getColumns()), getRandom(grid.getRows()), Color.BLACK, this, "BARRIER"));
@@ -68,6 +81,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
                 }
             }
         }
+        soundManager = MySoundManager.getSoundManager();
     }
 
     private int getRandom(int max) {
@@ -176,6 +190,10 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             } else if (state == GameState.PAUSE) {
                 state = GameState.GAME;
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            if (state == GameState.MENU) {
+                state = GameState.GAME;
+            }
         }
     }
 
@@ -187,38 +205,63 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     @Override
     public void environmentMouseClicked(MouseEvent e
     ) {
+        if (state == GameState.MENU) {
+            if (new Rectangle(505, 310, 300, 90).contains(e.getPoint())) {
+
+            } else {
+            }
+            state = GameState.GAME;
+            AudioPlayer.play("/deathadder/speed.wav");
+
+        }
     }
 
     @Override
-    public void paintEnvironment(Graphics graphics) {
-        if (state == GameState.MENU) {
-            graphics.draw3DRect(150, 100, 300, 90, true);
+    public void paintEnvironment(Graphics graphics
+    ) {
+        if ((state == GameState.PAUSE) || (state == GameState.GAME)) {
 
-        }
-        if (grid != null) {
-            grid.paintComponent(graphics);
-        }
-
-        if (slitherin != null) {
-            slitherin.draw(graphics);
-        }
-
-        if (barriers != null) {
-            for (int i = 0; i < barriers.size(); i++) {
-                barriers.get(i).draw(graphics);
+            if (grid != null) {
+                grid.paintComponent(graphics);
             }
-        }
 
-        if (speeds != null) {
-            for (int i = 0; i < speeds.size(); i++) {
-                speeds.get(i).draw(graphics);
+            if (barriers != null) {
+                for (int i = 0; i < barriers.size(); i++) {
+                    barriers.get(i).draw(graphics);
+                }
             }
-        }
 
-        if (healthPotions != null) {
-            for (int i = 0; i < healthPotions.size(); i++) {
-                healthPotions.get(i).draw(graphics);
+            if (speeds != null) {
+                for (int i = 0; i < speeds.size(); i++) {
+                    speeds.get(i).draw(graphics);
+                }
             }
+
+            if (healthPotions != null) {
+                for (int i = 0; i < healthPotions.size(); i++) {
+                    healthPotions.get(i).draw(graphics);
+                }
+            }
+
+            if (slitherin != null) {
+                slitherin.draw(graphics);
+            }
+
+            if (state == GameState.PAUSE) {
+                Font fnt0 = new Font("arial", Font.ITALIC, 70);
+                graphics.setFont(fnt0);
+                graphics.setColor(Color.WHITE);
+                graphics.drawString("PAUSE", 540, 380);
+            }
+        } else if (state == GameState.MENU) {
+
+            graphics.draw3DRect(505, 310, 300, 90, true);
+            Font fnt0 = new Font("arial", Font.BOLD, 70);
+            graphics.setFont(fnt0);
+            graphics.setColor(Color.BLACK);
+
+            graphics.drawString("START", 540, 380);
+
         }
     }
 
@@ -246,7 +289,8 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
 
 //<editor-fold defaultstate="collapsed" desc="MoveValidatorIntf">
     @Override
-    public Point validate(Point proposedLocation) {
+    public Point validate(Point proposedLocation
+    ) {
         //assess and adjust proposedLocation
         // if snake.x less than zero, then kill him, stop teh damn game, and mock the player for being weak
         if (proposedLocation.x < 0) {
