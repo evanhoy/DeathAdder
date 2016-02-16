@@ -34,20 +34,14 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     private MySoundManager soundManager;
 
     public Australia() {
-        state = GameState.GAME;
-        this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
-
-        state = GameState.PAUSE;
-        state = GameState.MENU;
         this.setBackground(Color.GREEN);
-        AudioPlayer.play("/deathadder/Dankstorm.mp3");
+//        state = GameState.GAME;
+//        this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
 
-//        if (state == GameState.MENU) {
-//            this.setBackground(Color.GREEN);
-//            AudioPlayer.play("/deathadder/Dankstorm.mp3");
-//        } else if (state == GameState.GAME) {
-//            this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
-//        } else if (state == GameState.PAUSE) 
+        setState(GameState.MENU);
+//        state = GameState.PAUSE;
+//        state = GameState.MENU;
+//        AudioPlayer.play("/deathadder/Dankstorm.mp3");
         
         grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.RED);
         slitherin = new Snake(Direction.RIGHT, Color.BLUE, grid, this);
@@ -105,7 +99,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
 
     @Override
     public void timerTaskHandler() {
-        if (state == GameState.GAME) {
+        if (getState() == GameState.GAME) {
 
             if (healthPotions != null) {
                 //if counted to limit, then move snake and reset counter
@@ -185,14 +179,14 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             slitherin.addGrowthCounter(2);
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
-            if (state == GameState.GAME) {
-                state = GameState.PAUSE;
-            } else if (state == GameState.PAUSE) {
-                state = GameState.GAME;
+            if (getState() == GameState.GAME) {
+                setState(GameState.PAUSE);
+            } else if (getState() == GameState.PAUSE) {
+                setState(GameState.GAME);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            if (state == GameState.MENU) {
-                state = GameState.GAME;
+            if (getState() == GameState.MENU) {
+                setState(GameState.GAME);
             }
         }
     }
@@ -205,13 +199,13 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     @Override
     public void environmentMouseClicked(MouseEvent e
     ) {
-        if (state == GameState.MENU) {
+        if (getState() == GameState.MENU) {
             if (new Rectangle(505, 310, 300, 90).contains(e.getPoint())) {
 
             } else {
             }
-            state = GameState.GAME;
-            AudioPlayer.play("/deathadder/speed.wav");
+            setState(GameState.GAME);
+//            AudioPlayer.play("/deathadder/speed.wav");
 
         }
     }
@@ -219,7 +213,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     @Override
     public void paintEnvironment(Graphics graphics
     ) {
-        if ((state == GameState.PAUSE) || (state == GameState.GAME)) {
+        if ((getState() == GameState.PAUSE) || (getState() == GameState.GAME)) {
 
             if (grid != null) {
                 grid.paintComponent(graphics);
@@ -247,13 +241,13 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
                 slitherin.draw(graphics);
             }
 
-            if (state == GameState.PAUSE) {
+            if (getState() == GameState.PAUSE) {
                 Font fnt0 = new Font("arial", Font.ITALIC, 70);
                 graphics.setFont(fnt0);
                 graphics.setColor(Color.WHITE);
                 graphics.drawString("PAUSE", 540, 380);
             }
-        } else if (state == GameState.MENU) {
+        } else if (getState() == GameState.MENU) {
 
             graphics.draw3DRect(505, 310, 300, 90, true);
             Font fnt0 = new Font("arial", Font.BOLD, 70);
@@ -307,4 +301,30 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         return proposedLocation;
     }
 //</editor-fold>
+
+    /**
+     * @return the state
+     */
+    public GameState getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    public void setState(GameState state) {
+        this.state = state;
+        
+        if (state == GameState.MENU) {
+            this.setBackground(Color.GREEN);
+            AudioPlayer.play("/deathadder/Dankstorm.mp3");
+        } else if (state == GameState.GAME) {
+            this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
+//            AudioPlayer.play("");
+        } else if (state == GameState.PAUSE){
+            this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
+            //do nothing
+        }
+        
+    }
 }
