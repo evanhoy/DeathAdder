@@ -97,7 +97,7 @@ public class Snake {
     private Direction direction = Direction.RIGHT;
     private ArrayList<Point> body;
     private Grid grid;
-    private Color bodyColor = Color.BLUE;
+    private Color bodyColor = new Color(0, 153, 51);
 
     private int health = 100;
     private int growthCounter;

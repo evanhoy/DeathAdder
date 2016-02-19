@@ -13,6 +13,7 @@ import images.ResourceTools;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -33,13 +34,16 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     private GameState state;
     private MySoundManager soundManager;
     private int score;
+    Image snakeImage;
 
     public Australia() {
         this.setBackground(Color.GREEN);
 
-        setState(GameState.MENU);;
+        snakeImage = ResourceTools.loadImageFromResource("deathadder/snake.png");
+                
+        setState(GameState.MENU);
 
-        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.GREEN);
+        grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.BLUE);
 
         slitherin = new Snake(Direction.RIGHT, Color.BLUE, grid, this);
         barriers = new ArrayList<>();
@@ -208,8 +212,10 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
 
             } else {
             }
-            setState(GameState.MENU);
+            setState(GameState.GAME);
+            slitherin = new Snake(Direction.RIGHT, Color.BLUE, grid, this);
             slitherin.setHealth(100);
+            setScore(0);
         }
     }
 
@@ -245,17 +251,17 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             }
 
             if (getState() == GameState.GAME) {
-                Font fnt0 = new Font("help", Font.BOLD, 25);
+                Font fnt0 = new Font("help", Font.ITALIC, 20);
                 graphics.setFont(fnt0);
                 graphics.setColor(Color.YELLOW);
                 graphics.drawString("P = PAUSE", 1215, 650);
 
-                Font fnt1 = new Font("help", Font.BOLD, 25);
+                Font fnt1 = new Font("help", Font.ITALIC, 20);
                 graphics.setFont(fnt1);
                 graphics.setColor(Color.YELLOW);
-                graphics.drawString("ARROWS = DIRECTION", 1070, 680);
+                graphics.drawString("ARROWS = DIRECTION", 1090, 680);
 
-                Font fnt2 = new Font("score", Font.ITALIC, 60);
+                Font fnt2 = new Font("score", Font.BOLD, 60);
                 graphics.setFont(fnt2);
                 graphics.setColor(Color.RED);
                 graphics.drawString(" SCORE: " + getScore(), 5, 675);
@@ -269,14 +275,25 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         } else if (getState() == GameState.MENU) {
 
             graphics.draw3DRect(505, 310, 300, 90, true);
-            Font fnt0 = new Font("arial", Font.BOLD, 70);
+            graphics.drawImage(snakeImage, 40, 200, this);
+            Font fnt0 = new Font("button", Font.BOLD, 70);
             graphics.setFont(fnt0);
             graphics.setColor(Color.BLACK);
 
             graphics.drawString("START", 540, 380);
+            
+            graphics.draw3DRect(505, 310, 300, 90, true);
+            Font fnt1 = new Font("title", Font.BOLD, 100);
+            graphics.setFont(fnt1);
+            graphics.setColor(Color.BLUE);
+
+            graphics.drawString("The BASTARD BASILISK", 100, 130);
 
         }
         if (getState() == GameState.END) {
+            graphics.setColor(Color.BLACK);
+            graphics.fill3DRect(0, 0, 2000, 2000, true);
+            
             Font fnt0 = new Font("help", Font.BOLD, 70);
             graphics.setFont(fnt0);
             graphics.setColor(Color.GREEN);
@@ -285,9 +302,14 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             Font fnt1 = new Font("help", Font.BOLD, 20);
             graphics.setFont(fnt1);
             graphics.setColor(Color.WHITE);
-            graphics.drawString("Click for MENU", 480, 420);
+            graphics.drawString("Click for RESTART", 480, 420);
+            
+            Font fnt2 = new Font("score", Font.BOLD, 30);
+            graphics.setFont(fnt2);
+            graphics.setColor(Color.WHITE);
+            graphics.drawString("SCORE: " + getScore(), 480, 480);
 
-            this.setBackground(Color.BLACK);
+
         }
     }
 
@@ -353,7 +375,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         } else if (state == GameState.PAUSE) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
         } else if (state == GameState.END) {
-            this.setBackground(Color.BLACK);
+            
         } else if (state == GameState.GAME) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
         }
