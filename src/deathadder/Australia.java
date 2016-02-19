@@ -209,6 +209,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             } else {
             }
             setState(GameState.MENU);
+            slitherin.setHealth(100);
         }
     }
 
