@@ -10,5 +10,5 @@ package deathadder;
  * @author evanhoy
  */
 public enum GameState {
-    MENU, GAME, PAUSE
+    MENU, GAME, PAUSE, END
 }

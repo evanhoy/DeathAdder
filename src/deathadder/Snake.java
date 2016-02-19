@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -46,7 +47,7 @@ public class Snake {
         body.add(new Point(20, 10));
         body.add(new Point(20, 11));
         body.add(new Point(20, 12));
-        
+
         this.moveValidator = moveValidator;
     }
 

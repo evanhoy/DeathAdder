@@ -32,13 +32,15 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
     private ArrayList<PickUp> healthPotions;
     private GameState state;
     private MySoundManager soundManager;
+    private int score;
 
     public Australia() {
         this.setBackground(Color.GREEN);
 
-        setState(GameState.MENU);
+        setState(GameState.MENU);;
 
         grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.GREEN);
+
         slitherin = new Snake(Direction.RIGHT, Color.BLUE, grid, this);
         barriers = new ArrayList<>();
         for (int i = 0; i < 40; i++) {
@@ -109,11 +111,14 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             }
 
             if (slitherin != null) {
+                setScore(getScore() + 1);
+
                 //if counted to limit, then move snake and reset counter
                 if (moveDelay >= moveDelayLimit) {
                     moveDelay = 0;
                     slitherin.move();
                     checkIntersections();
+
                 } else {
                     //else keep counting
                     moveDelay++;
@@ -135,6 +140,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             for (Barrier barrier : barriers) {
                 if (barrier.getLocation().equals(slitherin.getHead())) {
                     slitherin.addHealth(-10000);
+                    setState(GameState.END);
                 }
             }
         }
@@ -144,6 +150,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
                 if (healthPickUp.getLocation().equals(slitherin.getHead())) {
                     AudioPlayer.play("/deathadder/health.wav");
                     slitherin.addHealth(+20);
+                    slitherin.addGrowthCounter(1);
                 }
             }
         }
@@ -171,16 +178,10 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             slitherin.setDirection(Direction.LEFT);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             slitherin.setDirection(Direction.RIGHT);
-        } else if (e.getKeyCode() == KeyEvent.VK_G) {
-            slitherin.addGrowthCounter(2);
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
             if (getState() == GameState.GAME) {
                 setState(GameState.PAUSE);
             } else if (getState() == GameState.PAUSE) {
-                setState(GameState.GAME);
-            }
-        } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            if (getState() == GameState.MENU) {
                 setState(GameState.GAME);
             }
         }
@@ -200,8 +201,14 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             } else {
             }
             setState(GameState.GAME);
-//            AudioPlayer.play("/deathadder/speed.wav");
 
+        }
+        if (getState() == GameState.END) {
+            if (new Rectangle(505, 310, 300, 90).contains(e.getPoint())) {
+
+            } else {
+            }
+            setState(GameState.MENU);
         }
     }
 
@@ -235,15 +242,22 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             if (slitherin != null) {
                 slitherin.draw(graphics);
             }
+
             if (getState() == GameState.GAME) {
                 Font fnt0 = new Font("help", Font.BOLD, 25);
                 graphics.setFont(fnt0);
                 graphics.setColor(Color.YELLOW);
                 graphics.drawString("P = PAUSE", 1215, 650);
+
                 Font fnt1 = new Font("help", Font.BOLD, 25);
                 graphics.setFont(fnt1);
                 graphics.setColor(Color.YELLOW);
                 graphics.drawString("ARROWS = DIRECTION", 1070, 680);
+
+                Font fnt2 = new Font("score", Font.ITALIC, 60);
+                graphics.setFont(fnt2);
+                graphics.setColor(Color.RED);
+                graphics.drawString(" SCORE: " + getScore(), 5, 675);
             }
             if (getState() == GameState.PAUSE) {
                 Font fnt0 = new Font("arial", Font.ITALIC, 70);
@@ -260,6 +274,19 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
 
             graphics.drawString("START", 540, 380);
 
+        }
+        if (getState() == GameState.END) {
+            Font fnt0 = new Font("help", Font.BOLD, 70);
+            graphics.setFont(fnt0);
+            graphics.setColor(Color.GREEN);
+            graphics.drawString("GAME OVER", 480, 380);
+
+            Font fnt1 = new Font("help", Font.BOLD, 20);
+            graphics.setFont(fnt1);
+            graphics.setColor(Color.WHITE);
+            graphics.drawString("Click for MENU", 480, 420);
+
+            this.setBackground(Color.BLACK);
         }
     }
 
@@ -322,12 +349,26 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         if (state == GameState.MENU) {
             this.setBackground(Color.GREEN);
             AudioPlayer.play("/deathadder/Dankstorm.wav");
-        } else if (state == GameState.GAME) {
-            this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
-//            AudioPlayer.play("");
         } else if (state == GameState.PAUSE) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
+        } else if (state == GameState.END) {
+            this.setBackground(Color.BLACK);
+        } else if (state == GameState.GAME) {
+            this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
         }
+    }
 
+    /**
+     * @return the score
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * @param score the score to set
+     */
+    public void setScore(int score) {
+        this.score = score;
     }
 }
