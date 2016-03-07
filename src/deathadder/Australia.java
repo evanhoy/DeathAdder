@@ -40,7 +40,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         this.setBackground(Color.GREEN);
 
         snakeImage = ResourceTools.loadImageFromResource("deathadder/snake.png");
-                
+
         setState(GameState.MENU);
 
         grid = new Grid(60, 27, 22, 22, new Point(25, 25), Color.BLUE);
@@ -281,7 +281,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             graphics.setColor(Color.BLACK);
 
             graphics.drawString("START", 540, 380);
-            
+
             graphics.draw3DRect(505, 310, 300, 90, true);
             Font fnt1 = new Font("title", Font.BOLD, 100);
             graphics.setFont(fnt1);
@@ -293,7 +293,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         if (getState() == GameState.END) {
             graphics.setColor(Color.BLACK);
             graphics.fill3DRect(0, 0, 2000, 2000, true);
-            
+
             Font fnt0 = new Font("help", Font.BOLD, 70);
             graphics.setFont(fnt0);
             graphics.setColor(Color.GREEN);
@@ -303,12 +303,11 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
             graphics.setFont(fnt1);
             graphics.setColor(Color.WHITE);
             graphics.drawString("Click for RESTART", 480, 420);
-            
+
             Font fnt2 = new Font("score", Font.BOLD, 30);
             graphics.setFont(fnt2);
             graphics.setColor(Color.WHITE);
             graphics.drawString("SCORE: " + getScore(), 480, 480);
-
 
         }
     }
@@ -375,7 +374,7 @@ class Australia extends Environment implements CellDataProviderIntf, MoveValidat
         } else if (state == GameState.PAUSE) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
         } else if (state == GameState.END) {
-            
+
         } else if (state == GameState.GAME) {
             this.setBackground(ResourceTools.loadImageFromResource("deathadder/Desert.JPG"));
         }
